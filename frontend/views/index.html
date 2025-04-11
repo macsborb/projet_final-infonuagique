@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Bancaire</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Application Bancaire</h1>
+  <!-- Formulaire pour créer un compte -->
+  <div>
+    <h2>Créer un compte</h2>
+    <form id="create-account-form">
+      <input type="number" id="create-account-id" placeholder="ID du compte" required>
+      <input type="number" id="create-account-balance" placeholder="Solde initial" required>
+      <button type="submit">Créer le compte</button>
+    </form>
+  </div>
+  
+
+  <div>
+    <h2>Déposer de l'argent</h2>
+    <form id="deposit-form">
+      <input type="number" id="deposit-amount" placeholder="Montant à déposer" required>
+      <input type="number" id="deposit-account" placeholder="ID du compte" required>
+      <button type="submit">Déposer</button>
+    </form>
+  </div>
+
+  <div>
+    <h2>Retirer de l'argent</h2>
+    <form id="withdraw-form">
+      <input type="number" id="withdraw-amount" placeholder="Montant à retirer" required>
+      <input type="number" id="withdraw-account" placeholder="ID du compte" required>
+      <button type="submit">Retirer</button>
+    </form>
+  </div>
+
+  <div>
+    <h2>Consulter le solde</h2>
+    <form id="balance-form">
+      <input type="number" id="balance-account" placeholder="ID du compte" required>
+      <button type="submit">Vérifier le solde</button>
+    </form>
+    <p id="balance-result"></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
