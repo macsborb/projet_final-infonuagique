@@ -1,96 +1,65 @@
 const express = require('express');
 const mysql = require('mysql2');
-const path = require('path');
 const app = express();
-const port = 80;
+const PORT = process.env.PORT || 80;
 
-// Connecter à la base de données MySQL
-const connection = mysql.createConnection({
-  host: 'mysql', // nom du service mysql dans Kubernetes
-  user: 'root',
-  password: 'password',
-  database: 'mysql'
-});
-
-// Middleware pour parser le JSON
 app.use(express.json());
+app.use(express.static('views'));
 
-// Route par défaut pour GET / (accueil)
-app.use(express.static(path.join(__dirname, 'views')));
+const db = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+});
 
-// Route pour créer un compte
+// Connexion à la base de données
+db.connect(err => {
+    if (err) {
+        console.error("Erreur MySQL:", err);
+        process.exit(1);
+    } else {
+        console.log("Connecté à MySQL");
+    }
+});
+
+// Création compte
 app.post('/create-account', (req, res) => {
-    const { account_id, initial_balance } = req.body;
-  
-    connection.query(
-      'INSERT INTO accounts (account_id, balance) VALUES (?, ?)',
-      [account_id, initial_balance],
-      (err, results) => {
-        if (err) {
-          res.status(500).send('Erreur lors de la création du compte.');
-          return;
-        }
-        res.status(200).send('Compte créé avec succès.');
-      }
-    );
-  });
-
-// Route pour ajouter de l'argent à un compte
-app.post('/deposit', (req, res) => {
-  const { account_id, amount } = req.body;
-
-  connection.query(
-    'UPDATE accounts SET balance = balance + ? WHERE account_id = ?',
-    [amount, account_id],
-    (err, results) => {
-      if (err) {
-        res.status(500).send('Erreur lors du dépôt.');
-        return;
-      }
-      res.status(200).send('Dépôt réussi.');
-    }
-  );
+    const {name, balance} = req.body;
+    db.query('INSERT INTO accounts (name, balance) VALUES (?, ?)', [name, balance], (err) => {
+        if (err) return res.status(500).send(err);
+        res.status(201).send({message: 'Compte créé'});
+    });
 });
 
-// Route pour retirer de l'argent d'un compte
-app.post('/withdraw', (req, res) => {
-  const { account_id, amount } = req.body;
+// Effectuer un virement
+app.post('/transfer', (req, res) => {
+    const {fromId, toId, amount} = req.body;
+    db.beginTransaction(err => {
+        if (err) return res.status(500).send(err);
 
-  connection.query(
-    'UPDATE accounts SET balance = balance - ? WHERE account_id = ?',
-    [amount, account_id],
-    (err, results) => {
-      if (err) {
-        res.status(500).send('Erreur lors du retrait.');
-        return;
-      }
-      res.status(200).send('Retrait réussi.');
-    }
-  );
+        db.query('UPDATE accounts SET balance = balance - ? WHERE id = ?', [amount, fromId], (err) => {
+            if (err) return db.rollback(() => res.status(500).send(err));
+
+            db.query('UPDATE accounts SET balance = balance + ? WHERE id = ?', [amount, toId], (err) => {
+                if (err) return db.rollback(() => res.status(500).send(err));
+
+                db.commit(err => {
+                    if (err) return db.rollback(() => res.status(500).send(err));
+                    res.status(200).send({message: 'Virement effectué'});
+                });
+            });
+        });
+    });
 });
 
-// Route pour récupérer le solde d'un compte
-app.get('/balance/:account_id', (req, res) => {
-  const account_id = req.params.account_id;
-
-  connection.query(
-    'SELECT balance FROM accounts WHERE account_id = ?',
-    [account_id],
-    (err, results) => {
-      if (err) {
-        res.status(500).send('Erreur lors de la récupération du solde.');
-        return;
-      }
-      if (results.length > 0) {
-        res.status(200).send(`Solde: ${results[0].balance}`);
-      } else {
-        res.status(404).send('Compte non trouvé.');
-      }
-    }
-  );
+// Liste des comptes
+app.get('/accounts', (req, res) => {
+    db.query('SELECT * FROM accounts', (err, results) => {
+        if (err) return res.status(500).send(err);
+        res.json(results);
+    });
 });
 
-// Démarrer le serveur
-app.listen(port, () => {
-  console.log(`Frontend à l'écoute sur le port ${port}`);
-});
+// Écoute du serveur
+app.listen(PORT, () => console.log(`Serveur actif sur le port ${PORT}`));

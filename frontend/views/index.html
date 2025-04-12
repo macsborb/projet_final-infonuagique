@@ -1,51 +1,111 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Application Bancaire</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Application Bancaire - Accueil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Application Bancaire</h1>
-  <!-- Formulaire pour créer un compte -->
-  <div>
-    <h2>Créer un compte</h2>
-    <form id="create-account-form">
-      <input type="number" id="create-account-id" placeholder="ID du compte" required>
-      <input type="number" id="create-account-balance" placeholder="Solde initial" required>
-      <button type="submit">Créer le compte</button>
-    </form>
-  </div>
-  
+<div class="container py-5">
+    <h1 class="mb-4">Application Bancaire</h1>
+    
+    <div class="row">
+        <!-- Formulaire Création Compte -->
+        <div class="col-md-6">
+            <h2>Créer un compte</h2>
+            <form id="createAccountForm">
+                <div class="mb-3">
+                    <label class="form-label">Nom du compte</label>
+                    <input type="text" class="form-control" id="accountName" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Solde initial (€)</label>
+                    <input type="number" class="form-control" id="initialBalance" required>
+                </div>
+                <button type="submit" class="btn btn-success">Créer</button>
+            </form>
+        </div>
 
-  <div>
-    <h2>Déposer de l'argent</h2>
-    <form id="deposit-form">
-      <input type="number" id="deposit-amount" placeholder="Montant à déposer" required>
-      <input type="number" id="deposit-account" placeholder="ID du compte" required>
-      <button type="submit">Déposer</button>
-    </form>
-  </div>
+        <!-- Formulaire Virement -->
+        <div class="col-md-6">
+            <h2>Effectuer un virement</h2>
+            <form id="transferForm">
+                <div class="mb-3">
+                    <label class="form-label">Compte source (ID)</label>
+                    <input type="number" class="form-control" id="sourceAccountId" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Compte destination (ID)</label>
+                    <input type="number" class="form-control" id="destinationAccountId" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Montant (€)</label>
+                    <input type="number" class="form-control" id="transferAmount" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Transférer</button>
+            </form>
+        </div>
+    </div>
 
-  <div>
-    <h2>Retirer de l'argent</h2>
-    <form id="withdraw-form">
-      <input type="number" id="withdraw-amount" placeholder="Montant à retirer" required>
-      <input type="number" id="withdraw-account" placeholder="ID du compte" required>
-      <button type="submit">Retirer</button>
-    </form>
-  </div>
+    <!-- Liste des comptes -->
+    <div class="mt-5">
+        <h2>Liste des comptes</h2>
+        <button class="btn btn-secondary mb-3" onclick="loadAccounts()">Actualiser</button>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom du compte</th>
+                <th>Solde (€)</th>
+            </tr>
+            </thead>
+            <tbody id="accountsTable">
+            </tbody>
+        </table>
+    </div>
+</div>
 
-  <div>
-    <h2>Consulter le solde</h2>
-    <form id="balance-form">
-      <input type="number" id="balance-account" placeholder="ID du compte" required>
-      <button type="submit">Vérifier le solde</button>
-    </form>
-    <p id="balance-result"></p>
-  </div>
+<script>
+async function loadAccounts() {
+    const response = await fetch('/accounts');
+    const accounts = await response.json();
+    const accountsTable = document.getElementById('accountsTable');
+    accountsTable.innerHTML = '';
+    accounts.forEach(acc => {
+        accountsTable.innerHTML += `<tr><td>${acc.id}</td><td>${acc.name}</td><td>${acc.balance}</td></tr>`;
+    });
+}
 
-  <script src="script.js"></script>
+document.getElementById('createAccountForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await fetch('/create-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: document.getElementById('accountName').value,
+            balance: document.getElementById('initialBalance').value
+        })
+    });
+    loadAccounts();
+});
+
+document.getElementById('transferForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await fetch('/transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            fromId: document.getElementById('sourceAccountId').value,
+            toId: document.getElementById('destinationAccountId').value,
+            amount: document.getElementById('transferAmount').value
+        })
+    });
+    loadAccounts();
+});
+
+// Chargement initial des comptes
+loadAccounts();
+</script>
 </body>
 </html>

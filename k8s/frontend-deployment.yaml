@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: robbie14/frontend:v7
+          image: robbie14/monfrontend:v3
           ports:
             - containerPort: 80
           env:
