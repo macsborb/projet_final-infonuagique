@@ -23,9 +23,21 @@ Vous devriez voir `catalog-service` et `catalog-db` avec le statut "Up".
 Vous devriez voir `frontend-service` avec le statut "Up".
 
 3. Frontend URL
-L'URL du frontend est : ```bash
+L'URL du frontend est :
+
+```bash
 http://localhost:80/index.html
 ```
+
+5. Secret Stripe
+Pour faire fonctionner Stripe inserer la clé stripe envoyer dans le Discord en message épingler.
+
+Vous pouvez l'inserer directement dans le docker-compose ou alors dans un fichier .env avec comme nom de variable : 
+
+```bash
+STRIPE_SECRET_KEY=YourStripeSecretKey
+```
+
 
 # Microservice d'authentification
 
