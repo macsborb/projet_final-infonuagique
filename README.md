@@ -29,7 +29,7 @@ L'URL du frontend est :
 http://localhost:80/index.html
 ```
 
-5. Secret Stripe
+4. Secret Stripe
    
 Pour faire fonctionner Stripe inserer la clé Stripe envoyer dans le Discord en message épingler.
 
