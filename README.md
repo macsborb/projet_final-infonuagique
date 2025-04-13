@@ -30,7 +30,8 @@ http://localhost:80/index.html
 ```
 
 5. Secret Stripe
-Pour faire fonctionner Stripe inserer la clé stripe envoyer dans le Discord en message épingler.
+   
+Pour faire fonctionner Stripe inserer la clé Stripe envoyer dans le Discord en message épingler.
 
 Vous pouvez l'inserer directement dans le docker-compose ou alors dans un fichier .env avec comme nom de variable : 
 
