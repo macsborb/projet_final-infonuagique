@@ -18,9 +18,14 @@ docker-compose up -d
 ```bash
 docker-compose ps
 ```
-
 Vous devriez voir `auth-service` et `auth-db` avec le statut "Up".
 Vous devriez voir `catalog-service` et `catalog-db` avec le statut "Up".
+Vous devriez voir `frontend-service` avec le statut "Up".
+
+3. Frontend URL
+L'URL du frontend est : ```bash
+http://localhost:80/index.html
+```
 
 # Microservice d'authentification
 
