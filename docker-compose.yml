@@ -1,5 +1,4 @@
 services:
-  # Service d'authentification
   auth-service:
     build: ./authentication
     container_name: auth-service
@@ -18,7 +17,6 @@ services:
       - ecommerce-network
     restart: unless-stopped
 
-  # Base de données pour le service d'authentification
   auth-db:
     image: mysql:8.0
     container_name: auth-db
@@ -34,7 +32,6 @@ services:
       - ecommerce-network
     restart: unless-stopped
     
-  # Service de catalogue
   catalog-service:
     build: ./catalog
     container_name: catalog-service
@@ -53,7 +50,6 @@ services:
       - ecommerce-network
     restart: unless-stopped
     
-  # Base de données pour le service de catalogue
   catalog-db:
     image: mysql:8.0
     container_name: catalog-db
@@ -65,6 +61,32 @@ services:
     volumes:
       - catalog-db-data:/var/lib/mysql
       - ./catalog/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+  
+  frontend:
+    build: ./frontend
+    container_name: frontend-service
+    ports:
+      - "80:80"
+    networks:
+      - ecommerce-network
+    depends_on:
+      - catalog-service
+      - auth-service
+    restart: unless-stopped
+  
+  payment-service:
+    build: ./paymentService
+    container_name: payment-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - SUCCESS_URL=http://localhost:80/success.html
+      - CANCEL_URL=http://localhost/stripe/cancel.html
     networks:
       - ecommerce-network
     restart: unless-stopped

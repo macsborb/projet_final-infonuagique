@@ -1,0 +1,13 @@
+body {
+    background-color: #f8f9fa;
+  }
+  
+  header {
+    margin-bottom: 20px;
+  }
+  
+  #authMessage {
+    font-weight: bold;
+    margin-top: 15px;
+  }
+  
