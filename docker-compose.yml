@@ -33,6 +33,41 @@ services:
     networks:
       - ecommerce-network
     restart: unless-stopped
+    
+  # Service de catalogue
+  catalog-service:
+    build: ./catalog
+    container_name: catalog-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - catalog-db
+    environment:
+      - PORT=3002
+      - DB_HOST=catalog-db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=catalog_db
+      - JWT_SECRET=your_jwt_secret_key
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+    
+  # Base de données pour le service de catalogue
+  catalog-db:
+    image: mysql:8.0
+    container_name: catalog-db
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=catalog_db
+    volumes:
+      - catalog-db-data:/var/lib/mysql
+      - ./catalog/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
 networks:
   ecommerce-network:
@@ -40,3 +75,4 @@ networks:
 
 volumes:
   auth-db-data:
+  catalog-db-data:

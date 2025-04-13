@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: catalog-mysql
+spec:
+  selector:
+    matchLabels:
+      app: catalog-mysql
+  serviceName: "catalog-mysql-service"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: catalog-mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+          name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-catalog-secret
+              key: mysql-root-password
+        - name: MYSQL_DATABASE
+          value: catalog_db
+        volumeMounts:
+        - name: catalog-mysql-data
+          mountPath: /var/lib/mysql
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi"
+  volumeClaimTemplates:
+  - metadata:
+      name: catalog-mysql-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-mysql-service
+spec:
+  selector:
+    app: catalog-mysql
+  ports:
+  - port: 3306
+    targetPort: 3306
+  clusterIP: None
