@@ -1,0 +1,42 @@
+services:
+  # Service d'authentification
+  auth-service:
+    build: ./authentication
+    container_name: auth-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - auth-db
+    environment:
+      - PORT=3001
+      - DB_HOST=auth-db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=auth_db
+      - JWT_SECRET=your_jwt_secret_key
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # Base de données pour le service d'authentification
+  auth-db:
+    image: mysql:8.0
+    container_name: auth-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=auth_db
+    volumes:
+      - auth-db-data:/var/lib/mysql
+      - ./authentication/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  auth-db-data:
