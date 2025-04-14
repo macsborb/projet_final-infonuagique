@@ -16,6 +16,8 @@
         <a class="navbar-brand" href="#">E-commerce</a>
         <div class="d-flex">
           <!-- Boutons initialement cachés -->
+          <button id="supportBtn" class="btn btn-secondary me-2 d-none">Support client</button>
+
           <button id="viewCartBtn" class="btn btn-info me-2 d-none">Voir Panier</button>
           <button id="checkoutBtn" class="btn btn-primary me-2 d-none">Procéder au paiement</button>
           <button id="logoutBtn" class="btn btn-outline-danger d-none">Déconnexion</button>
@@ -71,6 +73,27 @@
         <!-- Les produits seront injectés ici -->
       </div>
     </section>
+    <section id="supportSection" class="d-none">
+      <h2>Support client</h2>
+      <form id="supportForm">
+        <hr>
+        <h4>Mes Tickets</h4>
+        <button id="loadTicketsBtn" class="btn btn-outline-secondary mb-3">Recharger mes tickets</button>
+        <ul id="ticketList" class="list-group"></ul>
+
+        <div class="mb-3">
+          <label for="supportSubject" class="form-label">Sujet</label>
+          <input type="text" class="form-control" id="supportSubject" required>
+        </div>
+        <div class="mb-3">
+          <label for="supportMessage" class="form-label">Message</label>
+          <textarea class="form-control" id="supportMessage" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+      </form>
+      <div id="supportFeedback" class="mt-2"></div>
+    </section>
+    
   </main>
 
   <!-- Bootstrap JS -->

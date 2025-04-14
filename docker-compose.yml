@@ -91,6 +91,40 @@ services:
       - ecommerce-network
     restart: unless-stopped
 
+
+
+  support-service:
+    build: ./support
+    ports:
+      - "3004:3004"
+    environment:
+      - DB_HOST=support-db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=support_db
+      - JWT_SECRET=your_jwt_secret_key
+    depends_on:
+      - support-db
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  support-db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: support_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - support-db-data:/var/lib/mysql
+      - ./support/schema.sql:/docker-entrypoint-initdb.d/schema.sql   # Ligne corrigée
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+
+
 networks:
   ecommerce-network:
     driver: bridge
@@ -98,3 +132,4 @@ networks:
 volumes:
   auth-db-data:
   catalog-db-data:
+  support-db-data:
