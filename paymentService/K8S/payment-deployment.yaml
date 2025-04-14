@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-deployment
+  labels:
+    app: payment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+      - name: payment
+        image: robbie14/payment-service:latest
+        ports:
+        - containerPort: 3003
+        env:
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stripe-secret
+              key: STRIPE_SECRET_KEY
+        - name: SUCCESS_URL
+          value: "http://localhost:80/success.html"
+        - name: CANCEL_URL
+          value: "http://localhost:80/cancel.html"
