@@ -193,7 +193,7 @@ Réponse attendue (200 OK):
     "created_at": "2023-04-01T10:00:00.000Z",
     "updated_at": "2023-04-01T10:00:00.000Z"
   },
-  ...
+  
 ]
 ```
 
@@ -331,6 +331,147 @@ Réponse attendue (200 OK):
 }
 ```
 
+# Microservice de Support
+
+Le service de support permet aux utilisateurs de créer des tickets pour poser des questions ou signaler des problèmes. Un administrateur peut consulter tous les tickets et les supprimer si nécessaire.
+
+## Structure du micro service
+```
+support/
+├── Dockerfile
+├── package.json
+├── server.js
+├── src/
+│   ├── controllers/
+│   │   └── ticketController.js
+│   ├── models/
+│   │   └── ticketModel.js
+│   ├── routes/
+│   │   └── ticketRoutes.js
+│   └── config/
+│       └── database.js
+└── schema.sql
+```
+##Test des API
+### 1. Créer un ticket
+**POST** `http://localhost:3004/api/tickets`
+
+Headers:
+
+```
+Authorization: Bearer votre_token_jwt
+```
+Corps de la requête (JSON):
+
+```json
+{
+  "subject": "Problème de connexion",
+  "message": "Je ne peux pas me connecter à mon compte."
+}
+```
+
+Réponse attendue (201 Created):
+
+
+```json
+{
+  "message": "Ticket créé avec succès",
+  "ticket": {
+    "id": 1,
+    "user_id": 1,
+    "subject": "Problème de connexion",
+    "message": "Je ne peux pas me connecter à mon compte.",
+    "status": "open",
+    "created_at": "2025-04-14T10:00:00.000Z"
+  }
+}
+```
+
+
+### 1. Créer un nouvel utilisateur (inscription)
+
+
+
+
+# 2. Obtenir tous les tickets (Admin uniquement)
+**GET** `http://localhost:3004/api/tickets`
+
+Headers:
+
+```
+
+Authorization: Bearer votre_token_jwt
+Réponse attendue (200 OK):
+```
+
+```json
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "subject": "Problème de connexion",
+    "message": "Je ne peux pas me connecter à mon compte.",
+    "status": "open",
+    "created_at": "2025-04-14T10:00:00.000Z"
+  },
+]
+```
+3. Obtenir les tickets d'un utilisateur
+**GET** `http://localhost:3004/api/tickets/user`
+
+Headers:
+
+```
+Authorization: Bearer votre_token_jwt
+```
+
+Réponse attendue (200 OK):
+
+```json
+
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "subject": "Problème de connexion",
+    "message": "Je ne peux pas me connecter à mon compte.",
+    "status": "open",
+    "created_at": "2025-04-14T10:00:00.000Z"
+  }
+]
+```
+4. Mettre à jour le statut d'un ticket (Admin uniquement)
+PUT http://localhost:3004/api/tickets/:id
+
+Headers:
+```
+Authorization: Bearer votre_token_jwt
+
+```
+Corps de la requête (JSON):
+```json
+{
+  "status": "closed"
+}
+```
+Réponse attendue (200 OK):
+
+```json
+
+{
+  "message": "Statut du ticket mis à jour avec succès"
+}
+```
+5. Vérifier la santé du service
+**GET** `http://localhost:3004/health`
+
+Réponse attendue (200 OK):
+
+```json
+{
+  "status": "ok"
+}
+```
 ## Notes sur l'authentification
 
 Pour les opérations d'administration (création, mise à jour et suppression de produits), vous devez être authentifié en tant qu'administrateur. Dans notre implémentation simplifiée, l'utilisateur avec l'ID 1 est considéré comme administrateur.
