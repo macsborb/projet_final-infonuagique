@@ -95,6 +95,7 @@ services:
 
   support-service:
     build: ./support
+    container_name: support-service
     ports:
       - "3004:3004"
     environment:
@@ -110,7 +111,8 @@ services:
     restart: unless-stopped
 
   support-db:
-    image: mysql:8
+    image: mysql:8.0
+    container_name: support-db
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: support_db

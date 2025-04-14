@@ -5,7 +5,7 @@ metadata:
   labels:
     app: catalog-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: catalog-service
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: catalog-service
-        image: catalog-service:latest
+        image: fynewix/catalog-service:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3002

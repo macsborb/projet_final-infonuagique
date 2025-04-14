@@ -7,7 +7,7 @@ spec:
     matchLabels:
       app: catalog-mysql
   serviceName: "catalog-mysql-service"
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
