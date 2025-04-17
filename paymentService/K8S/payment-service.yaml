@@ -9,4 +9,6 @@ spec:
     - protocol: TCP
       port: 3003
       targetPort: 3003
+      nodePort: 31003 # Ajoute cette ligne avec un port libre (31001)
   type: NodePort
+

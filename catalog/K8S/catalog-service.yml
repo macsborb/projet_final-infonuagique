@@ -8,4 +8,5 @@ spec:
   ports:
   - port: 3002
     targetPort: 3002
-  type: ClusterIP
+    nodePort: 31002 # Ajoute cette ligne avec un port libre (31001)
+  type: NodePort
