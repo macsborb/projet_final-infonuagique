@@ -1,1 +1,56 @@
+# Fichiers de configuration sensibles
 .env
+.env.local
+.env.development
+.env.production
+*.pem
+*.key
+*.cert
+
+# Fichiers de logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dépendances
+node_modules/
+jspm_packages/
+bower_components/
+
+# Builds et fichiers générés
+dist/
+build/
+.output/
+.nuxt/
+.next/
+out/
+
+# Caches et fichiers temporaires
+.cache/
+.temp/
+.tmp/
+*.swp
+.DS_Store
+.idea/
+.vscode/
+*.sublime-*
+.history/
+
+# Fichiers Docker et Kubernetes
+.docker/
+.kube/
+
+# Fichiers spécifiques à Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Fichiers spécifiques à MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
