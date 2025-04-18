@@ -2,7 +2,7 @@ const mysql = require('mysql2/promise');
 
 // Configuration de la connexion à la base de données
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
+  host: process.env.DB_HOST || 'catalog-mysql-service',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'catalog_db',

@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/products', productRoutes);
+app.use('/api/catalog/products', productRoutes);
 
 // Health check endpoint pour Kubernetes
 app.get('/health', (req, res) => {

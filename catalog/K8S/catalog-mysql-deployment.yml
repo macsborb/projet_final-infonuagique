@@ -7,7 +7,7 @@ spec:
     matchLabels:
       app: catalog-mysql
   serviceName: "catalog-mysql-service"
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -30,6 +30,8 @@ spec:
         volumeMounts:
         - name: catalog-mysql-data
           mountPath: /var/lib/mysql
+        - name: catalog-initdb
+          mountPath: /docker-entrypoint-initdb.d
         resources:
           limits:
             cpu: "0.5"
@@ -37,6 +39,10 @@ spec:
           requests:
             cpu: "0.2"
             memory: "256Mi"
+      volumes:
+      - name: catalog-initdb
+        configMap:
+          name: catalog-mysql-initdb-config
   volumeClaimTemplates:
   - metadata:
       name: catalog-mysql-data

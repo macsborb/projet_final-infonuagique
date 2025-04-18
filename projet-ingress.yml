@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: projet-ingress
+spec:
+  rules:
+    - host: e-commerce.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+          - path: /api/auth/
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3001
+          - path: /api/catalog/
+            pathType: Prefix
+            backend:
+              service:
+                name: catalog-service
+                port:
+                  number: 3002
+          - path: /api/payment/
+            pathType: Prefix
+            backend:
+              service:
+                name: payment-service
+                port:
+                  number: 3003
+          - path: /api/support/
+            pathType: Prefix
+            backend:
+              service:
+                name: support-service
+                port:
+                  number: 3004
