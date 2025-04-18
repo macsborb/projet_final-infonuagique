@@ -16,16 +16,16 @@ spec:
     spec:
       containers:
       - name: payment
-        image: robbie14/payment-service:latest
+        image: fynewix/payment-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3003
+        envFrom:
+        - configMapRef:
+            name: env-config
         env:
         - name: STRIPE_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: stripe-secret
               key: STRIPE_SECRET_KEY
-        - name: SUCCESS_URL
-          value: "http://localhost:80/success.html"
-        - name: CANCEL_URL
-          value: "http://localhost:80/cancel.html"

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paiement réussi</title>
+  <!-- Optionnel : redirection automatique au cas où le JS ne fonctionnerait pas -->
+  <meta http-equiv="refresh" content="5;url=index.html">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .message {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #2cae15;
+    }
+    .timer {
+      font-size: 20px;
+    }
+    .countdown {
+      color: #ff0000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="message">Le paiement a été confimé.</div>
+    <div class="message">Merci de nous faire confiance !</div>
+    <div class="timer">Retour au site dans <span id="countdown">5</span> secondes...</div>
+  </div>
+  
+  <script>
+    let countdownElement = document.getElementById('countdown');
+    let seconds = 5;
+    
+    const interval = setInterval(() => {
+      seconds--;
+      countdownElement.textContent = seconds;
+      
+      if (seconds <= 0) {
+        clearInterval(interval);
+        // Redirige vers la page catalogue (ici index.html)
+        window.location.href = "../index.html";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

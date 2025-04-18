@@ -1,4 +1,6 @@
-require('dotenv').config();
+// Charger les variables d'environnement en premier
+require('dotenv').config({ path: '../.env' });
+
 const express = require('express');
 const cors = require('cors');
 const productRoutes = require('./src/routes/productRoutes');
@@ -18,7 +20,7 @@ app.get('/health', (req, res) => {
 });
 
 // Port
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.CATALOG_PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Service de catalogue démarré sur le port ${PORT}`);
 });

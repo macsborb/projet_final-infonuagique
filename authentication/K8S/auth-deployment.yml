@@ -17,21 +17,18 @@ spec:
       containers:
       - name: auth-service
         image: fynewix/auth-service:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 3001
+        envFrom:
+        - configMapRef:
+            name: env-config
         env:
-        - name: DB_HOST
-          value: auth-mysql-service
-        - name: DB_USER
-          value: root
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-auth-secret
               key: mysql-root-password
-        - name: DB_NAME
-          value: auth_db
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:

@@ -1,5 +1,9 @@
 // support/src/middlewares/authMiddleware.js
 const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: '../../../.env' });
+
+// Utilisation de la variable d'environnement pour le JWT
+const JWT_SECRET = process.env.AUTH_JWT_SECRET || 'your_jwt_secret_key';
 
 const authenticate = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -8,7 +12,7 @@ const authenticate = (req, res, next) => {
   const token = authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Token invalide' });
 
-  jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret', (err, user) => {
+  jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ message: 'Token invalide' });
     req.user = user;
     next();

@@ -17,21 +17,18 @@ spec:
       containers:
       - name: catalog-service
         image: fynewix/catalog-service:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 3002
+        envFrom:
+        - configMapRef:
+            name: env-config
         env:
-        - name: DB_HOST
-          value: catalog-mysql-service
-        - name: DB_USER
-          value: root
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-catalog-secret
               key: mysql-root-password
-        - name: DB_NAME
-          value: catalog_db
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
