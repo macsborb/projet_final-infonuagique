@@ -1,10 +1,22 @@
 # Arrêter si erreur
 $ErrorActionPreference = "Stop"
 
-# Vérifier si le fichier .env existe et le générer si nécessaire
+# Vérifier si le fichier .env existe et afficher une erreur s'il n'existe pas
 if (-not (Test-Path .\.env)) {
-  Write-Output "🔧 Génération du fichier .env..."
-  node setup-env.js
+  Write-Output "❌ Erreur : Le fichier .env n'existe pas."
+  Write-Output "Veuillez d'abord exécuter 'npm run setup' puis configurer votre clé API Stripe dans le fichier .env"
+  exit 1
+}
+
+# Vérifier si la clé API Stripe est toujours la valeur par défaut
+$stripeKeyDefault = Select-String -Path .\.env -Pattern "PAYMENT_STRIPE_KEY=sk_test_your_stripe_key"
+if ($stripeKeyDefault) {
+  Write-Output "⚠️ Attention : Vous utilisez la clé API Stripe par défaut."
+  Write-Output "Veuillez modifier le fichier .env pour ajouter votre vraie clé API Stripe."
+  $confirm = Read-Host "Voulez-vous continuer quand même ? (o/N)"
+  if ($confirm -ne "o") {
+    exit 1
+  }
 }
 
 # Charger les variables d'environnement depuis le fichier .env

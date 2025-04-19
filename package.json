@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Projet e-commerce microservices avec Kubernetes",
   "scripts": {
-    "setup": "node setup-env.js",
-    "start": "node setup-env.js && pwsh ./deploy.ps1"
+    "setup": "node setup-env.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "crypto": "^1.0.1"
   }
 }

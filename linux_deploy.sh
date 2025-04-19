@@ -3,10 +3,21 @@
 # Arrêter si erreur
 set -e
 
-# Vérifier si le fichier .env existe et le générer si nécessaire
+# Vérifier si le fichier .env existe et afficher une erreur s'il n'existe pas
 if [ ! -f ./.env ]; then
-  echo "🔧 Génération du fichier .env..."
-  node setup-env.js
+  echo "❌ Erreur : Le fichier .env n'existe pas."
+  echo "Veuillez d'abord exécuter 'npm run setup' puis configurer votre clé API Stripe dans le fichier .env"
+  exit 1
+fi
+
+# Vérifier si la clé API Stripe est toujours la valeur par défaut
+if grep -q "PAYMENT_STRIPE_KEY=sk_test_your_stripe_key" ./.env; then
+  echo "⚠️ Attention : Vous utilisez la clé API Stripe par défaut."
+  echo "Veuillez modifier le fichier .env pour ajouter votre vraie clé API Stripe."
+  read -p "Voulez-vous continuer quand même ? (o/N) " confirm
+  if [ "$confirm" != "o" ]; then
+    exit 1
+  fi
 fi
 
 # Charger les variables d'environnement depuis le fichier .env
