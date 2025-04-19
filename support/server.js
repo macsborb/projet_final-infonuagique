@@ -1,22 +1,25 @@
+// Charger les variables d'environnement en premier
+require('dotenv').config({ path: '../.env' });
+
 const express = require('express');
-const cors = require('cors');  // Importer le package CORS
+const cors = require('cors');
 const app = express();
+const ticketRoutes = require('./src/routes/ticketRoutes');
 
-// Activer CORS pour toutes les requêtes
-app.use(cors());  // Cela permettra d'accepter les requêtes provenant de n'importe quel domaine
-
-// Autres middlewares
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-// Tes routes et contrôleurs
-const ticketRoutes = require('./src/routes/ticketRoutes');
+// Routes
 app.use('/api/tickets', ticketRoutes);
 
-// Autres routes éventuelles ou middleware
-// app.use('/api/otherRoute', otherRoutes);
+// Health check endpoint pour Kubernetes
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
-// Démarrer le serveur
-const PORT = process.env.PORT || 3004;
+// Port
+const PORT = process.env.SUPPORT_PORT || 3004;
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
+  console.log(`Service de support démarré sur le port ${PORT}`);
 });

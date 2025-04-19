@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
     try {
-      const response = await fetch('http://localhost:3001/api/auth/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password })
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     supportBtn.classList.remove('d-none');
 
     try {
-      const response = await fetch('http://localhost:3002/api/products');
+      const response = await fetch('/api/catalog/products');
       const products = await response.json();
       renderProducts(products);
     } catch (error) {
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function addToCart(product) {
     try {
-      const response = await fetch('http://localhost:3003/api/payment/cart', {
+      const response = await fetch('/api/payment/cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ item: { name: product.name, price: product.price, quantity: 1 } })
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   viewCartBtn.addEventListener('click', async () => {
     try {
-      const response = await fetch('http://localhost:3003/api/payment/cart');
+      const response = await fetch('/api/payment/cart');
       const cart = await response.json();
       alert("Contenu du panier :\n" + JSON.stringify(cart, null, 2));
     } catch (error) {
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   checkoutBtn.addEventListener('click', async () => {
     try {
-      const response = await fetch('http://localhost:3003/api/payment/checkout', {
+      const response = await fetch('/api/payment/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
 
       try {
-        const response = await fetch('http://localhost:3004/api/tickets', {
+        const response = await fetch('/api/tickets', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -228,7 +228,7 @@ loadTicketsBtn.addEventListener('click', async () => {
   const token = localStorage.getItem('token');
 
   try {
-    const response = await fetch('http://localhost:3004/api/tickets/my-tickets', {
+    const response = await fetch('/api/tickets/my-tickets', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`

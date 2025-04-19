@@ -2,8 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
-// Clé secrète pour JWT
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+// Utilisation de la variable d'environnement pour le JWT
+const JWT_SECRET = process.env.AUTH_JWT_SECRET || 'your_jwt_secret_key';
 
 // Fonction pour s'inscrire
 exports.register = async (req, res) => {

@@ -1,4 +1,6 @@
-require('dotenv').config();
+// Charger les variables d'environnement en premier
+require('dotenv').config({ path: '../.env' });
+
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./src/routes/authRoutes');
@@ -18,7 +20,7 @@ app.get('/health', (req, res) => {
 });
 
 // Port
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.AUTH_PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Service d'authentification démarré sur le port ${PORT}`);
 });

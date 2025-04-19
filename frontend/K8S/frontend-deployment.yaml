@@ -5,7 +5,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: robbie14/frontend-projet:v1
+        image: fynewix/frontend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+data:
+  # Service d'authentification
+  AUTH_DB_HOST: "auth-mysql-service"
+  AUTH_DB_USER: "root"
+  AUTH_DB_NAME: "auth_db"
+  AUTH_PORT: "3001"
+  
+  # Service de catalogue
+  CATALOG_DB_HOST: "catalog-mysql-service"
+  CATALOG_DB_USER: "root"
+  CATALOG_DB_NAME: "catalog_db"
+  CATALOG_PORT: "3002"
+  
+  # Service de paiement
+  PAYMENT_SUCCESS_URL: "http://e-commerce.local/stripe/success.html"
+  PAYMENT_CANCEL_URL: "http://e-commerce.local/stripe/cancel.html"
+  PAYMENT_PORT: "3003"
+  
+  # Service de support
+  SUPPORT_DB_HOST: "support-db"
+  SUPPORT_DB_USER: "root"
+  SUPPORT_DB_NAME: "support_db"
+  SUPPORT_PORT: "3004"

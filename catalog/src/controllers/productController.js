@@ -1,6 +1,9 @@
 const Product = require('../models/productModel');
 const jwt = require('jsonwebtoken');
 
+// Utilisation de la variable d'environnement pour le JWT
+const JWT_SECRET = process.env.AUTH_JWT_SECRET || 'your_jwt_secret_key';
+
 // Middleware pour vérifier l'authentification
 exports.verifyToken = (req, res, next) => {
   const bearerHeader = req.headers['authorization'];
@@ -11,7 +14,6 @@ exports.verifyToken = (req, res, next) => {
   
   try {
     const token = bearerHeader.split(' ')[1];
-    const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
@@ -23,9 +25,7 @@ exports.verifyToken = (req, res, next) => {
 
 // Middleware pour vérifier si l'utilisateur est administrateur
 exports.isAdmin = (req, res, next) => {
-  // Dans un système réel, vous vérifieriez le rôle de l'utilisateur dans la base de données
   // Pour simplifier, nous supposons que les utilisateurs avec un ID spécifique sont des administrateurs
-  // Vous pouvez modifier cette logique selon vos besoins
   if (req.user && req.user.id === 1) { // Supposons que l'utilisateur avec ID 1 est admin
     next();
   } else {
