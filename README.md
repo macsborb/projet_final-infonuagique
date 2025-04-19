@@ -1,481 +1,116 @@
-# Mise en route
+# Projet E-Commerce Microservices
 
-## Prérequis
+Ce projet est une application e-commerce basée sur une architecture de microservices, développée dans le cadre du cours d'infonuagique à l'UQAC. Il offre une plateforme complète avec authentification, catalogue de produits, paiement via Stripe et système de support client.
 
-- Docker et Docker Compose
-- Node.js (pour le développement local uniquement)
-- MySQL (pour le développement local uniquement)
-- Un client API comme Bruno, Postman ou curl
+# Architecture
+Le projet est composé des microservices suivants, tous conteneurisés avec Docker et orchestrés par Kubernetes :
 
-## Démarrage avec Docker Compose
+- **Frontend** : Interface utilisateur en HTML/CSS/JavaScript
+- **Service d'authentification** : Gestion des comptes utilisateurs et des connexions
+- **Service de catalogue** : Gestion des produits disponibles
+- **Service de paiement** : Intégration avec Stripe pour les paiements
+- **Service de support** : Système de tickets d'assistance
 
-1. Démarrez les conteneurs
+# Prérequis
+
+- Docker
+- kubectl
+- Minikube
+- Node.js
+- Clé API Stripe (version test)
+
+# Installation et Configuration
+
+## 1. Cloner le dépôt
 ```bash
-docker-compose up -d
+git clone https://github.com/yourusername/projet_final-infonuagique.git
+cd projet_final-infonuagique
 ```
 
-2. Vérifiez que les conteneurs sont en cours d'exécution
-```bash
-docker-compose ps
-```
-Vous devriez voir `auth-service` et `auth-db` avec le statut "Up".
-Vous devriez voir `catalog-service` et `catalog-db` avec le statut "Up".
-Vous devriez voir `frontend-service` avec le statut "Up".
+## 2. Configurer le fichier hosts
 
-3. Frontend URL
-L'URL du frontend est :
-
-```bash
-http://localhost:80/index.html
-```
-
-4. Secret Stripe
-   
-Pour faire fonctionner Stripe inserer la clé Stripe envoyer dans le Discord en message épingler.
-
-Vous pouvez l'inserer directement dans le docker-compose ou alors dans un fichier .env avec comme nom de variable : 
+Ajoutez l'entrée suivante à votre fichier hosts :
 
 ```bash
-STRIPE_SECRET_KEY=YourStripeSecretKey
+127.0.0.1 e-commerce.local
 ```
 
+Sur Windows, le fichier se trouve généralement à `C:\Windows\System32\drivers\etc\hosts`.
+Sur Linux et Mac, il se trouve à `/etc/hosts`.
 
-# Microservice d'authentification
+## 3. Installer les dépendances et configurer les variables d'environnement
 
-Le service d'authentification gère l'inscription, la connexion des utilisateurs et la génération des tokens JWT.
+```bash
+# Installer les dépendances Node.js
+npm install
 
-## Structure du micro service
-
-```
-authentication/
-├── Dockerfile
-├── package.json
-├── server.js
-├── src/
-│   ├── controllers/
-│   │   └── authController.js
-│   ├── models/
-│   │   └── userModel.js
-│   ├── routes/
-│   │   └── authRoutes.js
-│   └── config/
-│       └── database.js
-└── schema.sql
+# Générer le fichier .env avec des valeurs par défaut
+npm run setup
 ```
 
-## Test des API
+## 4. Modifier la clé API Stripe
 
-Vous pouvez tester les API à l'aide d'un client comme Bruno, Postman ou curl.
+Ouvrez le fichier .env à la racine du projet et remplacez :
 
-### 1. Créer un nouvel utilisateur (inscription)
+```bash
+STRIPE_SECRET_KEY=your_stripe_secret_key
+```
+par votre clé API Stripe.
 
-**POST** `http://localhost:3001/api/auth/register`
+# Lancement du Projet
+## 1. Démarrer Minikube
 
-Corps de la requête (JSON):
-```json
-{
-  "username": "testuser",
-  "email": "test@example.com",
-  "password": "password123"
-}
+```bash
+minikube start
 ```
 
-Réponse attendue (200 OK):
-```json
-{
-  "message": "Utilisateur créé avec succès",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5...",
-  "user": {
-    "id": 1,
-    "username": "testuser",
-    "email": "test@example.com"
-  }
-}
+## 2. Déployer l'application
+
+Sur Windows :
+```bash
+.\windows_deploy.ps1
 ```
 
-### 2. Connecter un utilisateur existant
-
-**POST** `http://localhost:3001/api/auth/login`
-
-Corps de la requête (JSON):
-```json
-{
-  "email": "test@example.com",
-  "password": "password123"
-}
+Sur Linux/macOS :
+```bash
+chmod +x ./linux_deploy.sh
+./linux_deploy.sh
 ```
 
-Réponse attendue (200 OK):
-```json
-{
-  "message": "Connexion réussie",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5...",
-  "user": {
-    "id": 1,
-    "username": "testuser",
-    "email": "test@example.com"
-  }
-}
+## 3. Configurer l'accès
+```bash
+# Créer un tunnel pour exposer les services
+minikube tunnel
 ```
 
-### 3. Récupérer les informations de l'utilisateur connecté
+Gardez cette commande en cours d'exécution dans un terminal séparé.
 
-**GET** `http://localhost:3001/api/auth/me`
-
-Headers:
-```
-Authorization: Bearer votre_token_jwt
-```
-
-Réponse attendue (200 OK):
-```json
-{
-  "user": {
-    "id": 1,
-    "username": "testuser",
-    "email": "test@example.com"
-  }
-}
-```
-
-### 4. Vérifier la santé du service
-
-**GET** `http://localhost:3001/health`
-
-Réponse attendue (200 OK):
-```json
-{
-  "status": "ok"
-}
-```
-
-# Microservice de Catalogue
-
-Le service de catalogue gère l'inventaire des produits, avec des fonctionnalités de recherche et d'administration.
-
-## Structure du micro service
+# Accéder à l'Application
+Une fois déployée, ouvrez votre navigateur et accédez à :
 
 ```
-catalog/
-├── Dockerfile
-├── package.json
-├── server.js
-├── src/
-│   ├── controllers/
-│   │   └── productController.js
-│   ├── models/
-│   │   └── productModel.js
-│   ├── routes/
-│   │   └── productRoutes.js
-│   └── config/
-│       └── database.js
-└── schema.sql
+http://e-commerce.local
 ```
 
-## Test des API
+# Arrêt du Projet
+Pour arrêter le projet, exécutez la commande suivante :
 
-Vous pouvez tester les API à l'aide d'un client comme Bruno, Postman ou curl.
+```bash
+# Arrêter minikube tunnel (Ctrl+C dans le terminal concerné)
 
-### 1. Obtenir tous les produits
+# Arrêter minikube
+minikube stop
 
-**GET** `http://localhost:3002/api/products`
-
-Réponse attendue (200 OK):
-```json
-[
-  {
-    "id": 1,
-    "name": "Smartphone XYZ",
-    "description": "Un smartphone haut de gamme avec écran OLED et appareil photo 48MP",
-    "price": 699.99,
-    "image_url": "smartphone.jpg",
-    "stock": 25,
-    "created_at": "2023-04-01T10:00:00.000Z",
-    "updated_at": "2023-04-01T10:00:00.000Z"
-  },
-  
-]
+# Pour supprimer complètement le cluster
+minikube delete
 ```
 
-### 2. Obtenir un produit par ID
+--- 
 
-**GET** `http://localhost:3002/api/products/1`
-
-Réponse attendue (200 OK):
-```json
-{
-  "id": 1,
-  "name": "Smartphone XYZ",
-  "description": "Un smartphone haut de gamme avec écran OLED et appareil photo 48MP",
-  "price": 699.99,
-  "image_url": "smartphone.jpg",
-  "stock": 25,
-  "created_at": "2023-04-01T10:00:00.000Z",
-  "updated_at": "2023-04-01T10:00:00.000Z"
-}
-```
-
-### 3. Rechercher des produits
-
-**GET** `http://localhost:3002/api/products/search?query=smartphone`
-
-Réponse attendue (200 OK):
-```json
-[
-  {
-    "id": 1,
-    "name": "Smartphone XYZ",
-    "description": "Un smartphone haut de gamme avec écran OLED et appareil photo 48MP",
-    "price": 699.99,
-    "image_url": "smartphone.jpg",
-    "stock": 25,
-    "created_at": "2023-04-01T10:00:00.000Z",
-    "updated_at": "2023-04-01T10:00:00.000Z"
-  }
-]
-```
-
-### 4. Créer un nouveau produit (Admin seulement)
-
-**POST** `http://localhost:3002/api/products`
-
-Headers:
-```
-Authorization: Bearer votre_token_jwt
-```
-
-Corps de la requête (JSON):
-```json
-{
-  "name": "Enceinte Bluetooth",
-  "description": "Enceinte portable étanche avec 20h d'autonomie",
-  "price": 89.99,
-  "image_url": "enceinte.jpg",
-  "stock": 50
-}
-```
-
-Réponse attendue (201 Created):
-```json
-{
-  "message": "Produit créé avec succès",
-  "product": {
-    "id": 6,
-    "name": "Enceinte Bluetooth",
-    "description": "Enceinte portable étanche avec 20h d'autonomie",
-    "price": 89.99,
-    "image_url": "enceinte.jpg",
-    "stock": 50
-  }
-}
-```
-
-### 5. Mettre à jour un produit (Admin seulement)
-
-**PUT** `http://localhost:3002/api/products/6`
-
-Headers:
-```
-Authorization: Bearer votre_token_jwt
-```
-
-Corps de la requête (JSON):
-```json
-{
-  "price": 79.99,
-  "stock": 45
-}
-```
-
-Réponse attendue (200 OK):
-```json
-{
-  "message": "Produit mis à jour avec succès",
-  "product": {
-    "id": 6,
-    "name": "Enceinte Bluetooth",
-    "description": "Enceinte portable étanche avec 20h d'autonomie",
-    "price": 79.99,
-    "image_url": "enceinte.jpg",
-    "stock": 45,
-    "created_at": "2023-04-01T11:00:00.000Z",
-    "updated_at": "2023-04-01T11:30:00.000Z"
-  }
-}
-```
-
-### 6. Supprimer un produit (Admin seulement)
-
-**DELETE** `http://localhost:3002/api/products/6`
-
-Headers:
-```
-Authorization: Bearer votre_token_jwt
-```
-
-Réponse attendue (200 OK):
-```json
-{
-  "message": "Produit supprimé avec succès"
-}
-```
-
-### 7. Vérifier la santé du service
-
-**GET** `http://localhost:3002/health`
-
-Réponse attendue (200 OK):
-```json
-{
-  "status": "ok"
-}
-```
-
-# Microservice de Support
-
-Le service de support permet aux utilisateurs de créer des tickets pour poser des questions ou signaler des problèmes. Un administrateur peut consulter tous les tickets et les supprimer si nécessaire.
-
-## Structure du micro service
-```
-support/
-├── Dockerfile
-├── package.json
-├── server.js
-├── src/
-│   ├── controllers/
-│   │   └── ticketController.js
-│   ├── models/
-│   │   └── ticketModel.js
-│   ├── routes/
-│   │   └── ticketRoutes.js
-│   └── config/
-│       └── database.js
-└── schema.sql
-```
-##Test des API
-### 1. Créer un ticket
-**POST** `http://localhost:3004/api/tickets`
-
-Headers:
-
-```
-Authorization: Bearer votre_token_jwt
-```
-Corps de la requête (JSON):
-
-```json
-{
-  "subject": "Problème de connexion",
-  "message": "Je ne peux pas me connecter à mon compte."
-}
-```
-
-Réponse attendue (201 Created):
+Développé dans le cadre du cours d'infonuagique à l'Université du Québec à Chicoutimi (UQAC).
 
 
-```json
-{
-  "message": "Ticket créé avec succès",
-  "ticket": {
-    "id": 1,
-    "user_id": 1,
-    "subject": "Problème de connexion",
-    "message": "Je ne peux pas me connecter à mon compte.",
-    "status": "open",
-    "created_at": "2025-04-14T10:00:00.000Z"
-  }
-}
-```
-
-
-### 1. Créer un nouvel utilisateur (inscription)
-
-
-
-
-# 2. Obtenir tous les tickets (Admin uniquement)
-**GET** `http://localhost:3004/api/tickets`
-
-Headers:
-
-```
-
-Authorization: Bearer votre_token_jwt
-Réponse attendue (200 OK):
-```
-
-```json
-[
-  {
-    "id": 1,
-    "user_id": 1,
-    "subject": "Problème de connexion",
-    "message": "Je ne peux pas me connecter à mon compte.",
-    "status": "open",
-    "created_at": "2025-04-14T10:00:00.000Z"
-  },
-]
-```
-3. Obtenir les tickets d'un utilisateur
-**GET** `http://localhost:3004/api/tickets/user`
-
-Headers:
-
-```
-Authorization: Bearer votre_token_jwt
-```
-
-Réponse attendue (200 OK):
-
-```json
-
-[
-  {
-    "id": 1,
-    "user_id": 1,
-    "subject": "Problème de connexion",
-    "message": "Je ne peux pas me connecter à mon compte.",
-    "status": "open",
-    "created_at": "2025-04-14T10:00:00.000Z"
-  }
-]
-```
-4. Mettre à jour le statut d'un ticket (Admin uniquement)
-PUT http://localhost:3004/api/tickets/:id
-
-Headers:
-```
-Authorization: Bearer votre_token_jwt
-
-```
-Corps de la requête (JSON):
-```json
-{
-  "status": "closed"
-}
-```
-Réponse attendue (200 OK):
-
-```json
-
-{
-  "message": "Statut du ticket mis à jour avec succès"
-}
-```
-5. Vérifier la santé du service
-**GET** `http://localhost:3004/health`
-
-Réponse attendue (200 OK):
-
-```json
-{
-  "status": "ok"
-}
-```
-## Notes sur l'authentification
-
-Pour les opérations d'administration (création, mise à jour et suppression de produits), vous devez être authentifié en tant qu'administrateur. Dans notre implémentation simplifiée, l'utilisateur avec l'ID 1 est considéré comme administrateur.
-
-Pour obtenir un token JWT valide, vous devez d'abord vous inscrire et vous connecter via le service d'authentification (`http://localhost:3001/api/auth/register` et `http://localhost:3001/api/auth/login`).
-
-
+# Contributeurs
+- Victor QIAN
+- Robbie BLANC
+- Clément MARY
