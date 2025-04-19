@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: support-db
+spec:
+  replicas: 1  # You can scale this as needed
+  selector:
+    matchLabels:
+      app: support-db
+  template:
+    metadata:
+      labels:
+        app: support-db
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: support-secrets
+                  key: db_root_password
+            - name: MYSQL_DATABASE
+              value: support_db
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          ports:
+            - containerPort: 3306
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: support-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: support-db
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: support-db
+  type: ClusterIP
