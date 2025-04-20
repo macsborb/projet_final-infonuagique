@@ -35,7 +35,7 @@ spec:
                 name: payment-service
                 port:
                   number: 3003
-          - path: /api/support/
+          - path: /api/tickets/
             pathType: Prefix
             backend:
               service:

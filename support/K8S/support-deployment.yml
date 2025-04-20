@@ -1,9 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: support-service
+  name: support-deployment
+  labels:
+    app: support-service
 spec:
-  replicas: 1  # You can scale this number as per your needs
+  replicas: 1
   selector:
     matchLabels:
       app: support-service
@@ -13,37 +15,35 @@ spec:
         app: support-service
     spec:
       containers:
-        - name: support-service
-          image: your-dockerhub-username/support-service:latest  # Replace with actual image
-          ports:
-            - containerPort: 3004
-          env:
-            - name: DB_HOST
-              value: support-db
-            - name: DB_USER
-              value: root
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: support-secrets
-                  key: db_password
-            - name: DB_NAME
-              value: support_db
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: support-secrets
-                  key: jwt_secret
-          restartPolicy: Always
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: support-service
-spec:
-  ports:
-    - port: 3004
-      targetPort: 3004
-  selector:
-    app: support-service
-  type: ClusterIP  # You can change it to NodePort or LoadBalancer for external access
+      - name: support-service
+        image: fynewix/support-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3004
+        envFrom:
+        - configMapRef:
+            name: env-config
+        env:
+        - name: SUPPORT_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-auth-secret
+              key: mysql-root-password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: secret
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi"

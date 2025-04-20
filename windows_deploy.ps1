@@ -34,6 +34,7 @@ kubectl delete -f projet-ingress.yml --ignore-not-found=true
 kubectl delete deployment frontend-deployment --ignore-not-found=true
 kubectl delete statefulset catalog-mysql --ignore-not-found=true
 kubectl delete statefulset auth-mysql --ignore-not-found=true
+kubectl delete statefulset support-mysql --ignore-not-found=true
 kubectl delete deployment catalog-deployment --ignore-not-found=true
 kubectl delete deployment auth-deployment --ignore-not-found=true
 kubectl delete deployment payment-deployment --ignore-not-found=true
@@ -82,16 +83,11 @@ kubectl apply -f catalog/K8S/catalog-mysql-deployment.yml
 kubectl apply -f catalog/K8S/catalog-deployment.yml
 kubectl apply -f catalog/K8S/catalog-service.yml
 
-# Vérifier si les fichiers du service support existent
-if (Test-Path support/K8S/support-mysql-initdb.yml) {
-    Write-Output "Déploiement du service de support..."
-    kubectl apply -f support/K8S/support-mysql-initdb.yml
-    kubectl apply -f support/K8S/support-mysql-deployment.yml
-    kubectl apply -f support/K8S/support-deployment.yml
-    kubectl apply -f support/K8S/support-service.yml
-} else {
-    Write-Output "⚠️ Les fichiers du service de support n'ont pas été trouvés. Le déploiement du service de support est ignoré."
-}
+Write-Output "Déploiement du service de support..."
+kubectl apply -f support/K8S/support-mysql-initdb.yml
+kubectl apply -f support/K8S/support-mysql-deployment.yml
+kubectl apply -f support/K8S/support-deployment.yml
+kubectl apply -f support/K8S/support-service.yml
 
 # Avant d'installer l'Ingress
 Write-Output "📦 Installation de l'Ingress Controller..."

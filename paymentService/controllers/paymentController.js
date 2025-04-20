@@ -2,7 +2,7 @@
 let cart = [];
 
 // Clé Stripe (test) via la variable d'environnement
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeSecretKey = process.env.PAYMENT_STRIPE_KEY;
 const stripe = require('stripe')(stripeSecretKey);
 
 // Ajouter un article au panier
@@ -41,8 +41,8 @@ exports.checkout = async (req, res) => {
       })),
       mode: 'payment',
       // URLs de redirection en cas de succès ou d'annulation
-      success_url: process.env.SUCCESS_URL || 'http://localhost:80/success.html',
-      cancel_url: process.env.CANCEL_URL || 'http://localhost:80/cancel.html'
+      success_url: process.env.PAYMENT_SUCCESS_URL || 'http://localhost:80/success.html',
+      cancel_url: process.env.PAYMENT_CANCEL_URL || 'http://localhost:80/cancel.html'
     });
     
     // Réinitialiser le panier après création de la session

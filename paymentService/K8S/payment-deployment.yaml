@@ -24,7 +24,7 @@ spec:
         - configMapRef:
             name: env-config
         env:
-        - name: STRIPE_SECRET_KEY
+        - name: PAYMENT_STRIPE_KEY
           valueFrom:
             secretKeyRef:
               name: stripe-secret
